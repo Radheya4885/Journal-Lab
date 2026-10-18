@@ -1,0 +1,11 @@
+{
+  "model_name": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+  "max_length": 512,
+  "candidate_k": 30,
+  "retrieval_k": 50,
+  "test_top_k": 10,
+  "device_used": "cuda",
+  "dataset_rows": 4900,
+  "test_query": "Retrieval augmented generation for scientific research paper recommendation",
+  "score_interpretation": "Raw cross-encoder scores; not calibrated probabilities."
+}

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description"
+    content="JournalLab — AI-powered research paper recommendation and hypothesis discovery platform." />
+  <title>JournalLab — Research search & recommendations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- High-Performance WebGL Gradient Wave Animation Background -->
+  <div id="gradientWaveBackground" class="gradient-wave-bg" aria-hidden="true"></div>
+
+  <!-- High-Performance GPU Ambient Mesh -->
+  <div class="ambient-mesh" aria-hidden="true">
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+    <div class="ambient-orb ambient-orb-3"></div>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="JournalLab home">
+      <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>Journal<span class="brand-lab">Lab</span></span>
+    </a>
+    <div class="topbar-actions">
+      <div class="status-indicator" id="systemStatus" title="Checking backend readiness...">
+        <span class="status-dot"></span>
+        <span class="status-text">Connecting...</span>
+      </div>
+      <button type="button" class="saved-toggle-btn" id="savedToggleBtn" aria-label="View saved papers">
+        <svg class="icon-bookmark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+        </svg>
+        <span>Saved Papers</span>
+        <span class="saved-count-badge" id="savedCountBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top" class="page-shell">
+    <!-- View 1: Main Landing / Search View -->
+    <div id="mainView" class="view-panel">
+      <section class="hero" aria-labelledby="pageTitle">
+        <p class="eyebrow">PAPER SEARCH &amp; RECOMMENDATION</p>
+        <h1 id="pageTitle">Find the papers <span>that move your work forward.</span></h1>
+        <p class="hero-copy">Search by topic, research question, or arXiv ID to discover genuinely ranked papers with
+          hybrid retrieval.</p>
+      </section>
+
+      <section class="search-box" aria-label="Search papers">
+        <form id="searchForm">
+          <label class="sr-only" for="researchQuery">Research topic or question</label>
+          <div class="query-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.8"></circle>
+              <path d="m16 16 4.4 4.4"></path>
+            </svg>
+            <input id="researchQuery" name="query" type="search" autocomplete="off"
+              placeholder="e.g. Reducing hallucinations in RAG systems or 2006.07909" />
+            <button type="button" class="clear-query" id="clearQuery" aria-label="Clear search" hidden>×</button>
+          </div>
+          <div class="search-bottom">
+            <label class="filter-label" for="domainSelect">Domain</label>
+            <select id="domainSelect" name="domain">
+              <option value="Auto">Auto-detect</option>
+              <option value="All domains">All domains</option>
+              <option value="Machine Learning">Machine Learning</option>
+              <option value="Natural Language Processing">Natural Language Processing</option>
+              <option value="Computer Vision">Computer Vision</option>
+              <option value="Artificial Intelligence">Artificial Intelligence</option>
+              <option value="Information Retrieval">Information Retrieval</option>
+              <option value="Robotics">Robotics</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+              <option value="Databases">Databases</option>
+            </select>
+            <span class="search-hint">Press Enter to search</span>
+            <button class="search-button" id="searchBtn" type="submit">Recommend <span
+                aria-hidden="true">↗</span></button>
+          </div>
+          <p class="form-error" id="searchError" role="status" hidden></p>
+        </form>
+      </section>
+
+      <div class="quick-searches" aria-label="Example searches">
+        <span>Try:</span>
+        <button type="button" class="query-chip" data-query="RAG hallucination">RAG hallucination</button>
+        <button type="button" class="query-chip" data-query="long-document summarization">Long-document
+          summarization</button>
+        <button type="button" class="query-chip" data-query="evidence verification">Evidence verification</button>
+        <button type="button" class="query-chip" data-query="2006.07909">arXiv:2006.07909</button>
+      </div>
+    </div>
+
+    <!-- Active Loading State with High-Performance Shimmer -->
+    <div class="loading-state" id="loadingState" hidden aria-live="polite">
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <div class="spinner-glow"></div>
+      </div>
+      <p class="loading-msg" id="loadingMsg">Executing hybrid retrieval across 4,900 papers...</p>
+
+      <div class="skeleton-list" aria-hidden="true">
+        <div class="skeleton-card">
+          <div class="skeleton-top">
+            <div class="skeleton-pill shimmer" style="width: 50px;"></div>
+            <div class="skeleton-pill shimmer" style="width: 80px;"></div>
+            <div class="skeleton-pill shimmer" style="width: 90px;"></div>
+          </div>
+          <div class="skeleton-title shimmer"></div>
+          <div class="skeleton-meta shimmer"></div>
+          <div class="skeleton-line shimmer"></div>
+          <div class="skeleton-line shimmer"></div>
+          <div class="skeleton-line shimmer short"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-top">
+            <div class="skeleton-pill shimmer" style="width: 50px;"></div>
+            <div class="skeleton-pill shimmer" style="width: 80px;"></div>
+            <div class="skeleton-pill shimmer" style="width: 90px;"></div>
+          </div>
+          <div class="skeleton-title shimmer"></div>
+          <div class="skeleton-meta shimmer"></div>
+          <div class="skeleton-line shimmer"></div>
+          <div class="skeleton-line shimmer"></div>
+          <div class="skeleton-line shimmer short"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 2: Dedicated Recommendations Page -->
+    <section class="results-section view-panel" id="resultsSection" hidden aria-label="Search results">
+      <!-- Back Navigation Header at Top -->
+      <div class="results-top-nav">
+        <button type="button" class="back-nav-btn" id="backToMainBtn" aria-label="Back to main page">
+          <svg class="back-arrow-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Back to Main Page</span>
+        </button>
+        <div class="query-context-pill" id="queryContextPill">
+          <span class="pill-dot"></span>
+          <span class="pill-label" id="pillLabel"></span>
+        </div>
+      </div>
+
+      <div class="results-header">
+        <div class="results-meta">
+          <h2 class="results-title" id="resultsTitle">Recommended Papers</h2>
+          <p class="results-subtitle" id="resultsSubtitle"></p>
+        </div>
+      </div>
+
+      <!-- Testing Input Matched Paper Section (Prominently Highlighted) -->
+      <div id="matchedInputSection" class="matched-input-section" hidden>
+        <div class="matched-section-header">
+          <span class="matched-section-badge">🎯 MATCHED WITH TESTING INPUT</span>
+          <span class="matched-section-desc">Seed paper corresponding to your input arXiv query</span>
+        </div>
+        <div id="matchedPaperCardContainer"></div>
+      </div>
+
+      <!-- Real Paper Cards List -->
+      <div class="results-list" id="resultsList" role="feed" aria-label="Paper recommendations"></div>
+    </section>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" hidden>
+      <svg class="empty-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor"
+        stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <h3 id="emptyTitle">No papers found</h3>
+      <p id="emptyMsg">Try broadening your search topic or selecting 'All domains'.</p>
+      <button type="button" class="secondary-btn" id="emptyBackBtn" style="margin-top:16px;">← Back to Main
+        Page</button>
+    </div>
+
+    <!-- Saved Papers Drawer / View -->
+    <section class="saved-drawer" id="savedDrawer" hidden aria-label="Saved papers collection">
+      <div class="drawer-header">
+        <h2>Your Saved Papers</h2>
+        <div class="drawer-actions">
+          <button type="button" class="secondary-btn" id="exportBibtexBtn"
+            style="padding:4px 10px; font-size:12px;">Export (.bib)</button>
+          <button type="button" class="text-btn" id="clearAllSavedBtn">Clear all</button>
+          <button type="button" class="close-btn" id="closeSavedBtn" aria-label="Close saved drawer">&times;</button>
+        </div>
+      </div>
+      <div class="saved-list" id="savedList"></div>
+    </section>
+  </main>
+
+  <!-- AI Analysis Modal (Research Gaps, Counter-Evidence, Experiment Plans) -->
+  <div class="modal-backdrop" id="aiModal" hidden role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-tag" id="aiModalTag">JOURNALLAB AI</span>
+          <h2 class="modal-title" id="aiModalTitle">Research Gap Analysis</h2>
+        </div>
+        <div class="modal-header-actions" style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="secondary-btn" id="copyAiMdBtn" title="Copy markdown to clipboard"
+            style="padding:6px 12px; font-size:12px;" hidden>Copy Markdown</button>
+          <button type="button" class="secondary-btn" id="downloadAiMdBtn" title="Download report as .md"
+            style="padding:6px 12px; font-size:12px;" hidden>Download (.md)</button>
+          <button type="button" class="modal-close" id="closeAiModalBtn" aria-label="Close modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="aiModalBody">
+        <div class="modal-loading" id="aiModalLoading">
+          <div class="spinner"></div>
+          <p>Analyzing literature with Groq RAG...</p>
+        </div>
+        <div class="modal-content" id="aiModalContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paper Architecture Figure Modal -->
+  <div class="modal-backdrop" id="figureModal" hidden role="dialog" aria-modal="true"
+    aria-labelledby="figureModalTitle">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <span class="modal-tag">ARCHITECTURE DIAGRAM</span>
+          <h2 class="modal-title" id="figureModalTitle">Paper Architecture &amp; Framework</h2>
+        </div>
+        <button type="button" class="modal-close" id="closeFigureModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="figure-container">
+          <img class="figure-img" id="figureImg" alt="Extracted architecture diagram from arXiv paper" />
+        </div>
+        <p class="figure-caption" id="figureCaption"></p>
+        <div class="figure-explain-section">
+          <button type="button" class="secondary-btn" id="explainFigureBtn">
+            <span>Explain Figure with Vision AI</span>
+            <span class="accent-sparkle">✦</span>
+          </button>
+          <div class="figure-explanation" id="figureExplanation" hidden></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="gradient-wave-bg.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

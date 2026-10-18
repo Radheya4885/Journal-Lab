@@ -1,0 +1,10 @@
+{
+  "method": "Reciprocal Rank Fusion",
+  "rrf_k": 60,
+  "candidate_k": 50,
+  "test_top_k": 10,
+  "tfidf_model": "TfidfVectorizer",
+  "semantic_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "dataset_rows": 4900,
+  "test_query": "Retrieval augmented generation for scientific research paper recommendation"
+}

@@ -1,0 +1,11 @@
+{
+  "project": "JournalLab",
+  "version": "1.0.0",
+  "paper_count": 4900,
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dimension": 384,
+  "tfidf_vocabulary_size": 69302,
+  "rrf_k": 60,
+  "dataset_file": "arxiv_papers_enriched_semantic_scholar_v1.csv",
+  "created_at_utc": "2026-10-17T14:36:06Z"
+}

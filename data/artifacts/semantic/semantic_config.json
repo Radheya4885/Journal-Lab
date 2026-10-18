@@ -1,0 +1,11 @@
+{
+  "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dimensions": 384,
+  "number_of_documents": 4900,
+  "embedding_dtype": "float32",
+  "normalized_embeddings": true,
+  "source_text_column": "semantic_text",
+  "similarity_metric": "cosine_similarity",
+  "metadata_file": "semantic_documents.csv",
+  "embeddings_file": "semantic_embeddings.npy"
+}
