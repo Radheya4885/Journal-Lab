@@ -1566,14 +1566,243 @@ mark.matched-term {
 }
 
 /* ==========================================================================
-   Responsive adjustments
+   Responsive Design for All Devices (Mobile, Tablet, Desktop)
    ========================================================================== */
-@media (max-width: 720px) {
-  .topbar { height: 66px; padding: 0 16px; }
-  .brand { font-size: 19px; }
-  .saved-toggle-btn span:first-of-type { display: none; }
-  .page-shell { width: calc(100% - 32px); padding-top: 32px; }
-  h1 { font-size: clamp(30px, 6.5vw, 40px); letter-spacing: -1.2px; }
-  .results-header { flex-direction: column; align-items: stretch; gap: 12px; }
-  .card-footer { flex-direction: column; align-items: flex-start; }
+
+/* Tablets & Medium Screens (<= 960px) */
+@media (max-width: 960px) {
+  .page-shell {
+    width: min(100% - 48px, 860px);
+    padding: 36px 0 80px;
+  }
+
+  .hero {
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5.5vw, 44px);
+  }
+}
+
+/* Mobile Screens & Phablets (<= 680px) */
+@media (max-width: 680px) {
+  .topbar {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .brand {
+    font-size: 19px;
+    gap: 8px;
+  }
+
+  .topbar-actions {
+    gap: 8px;
+  }
+
+  .status-indicator {
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+
+  .saved-toggle-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .saved-toggle-btn span:first-of-type {
+    display: none;
+  }
+
+  .page-shell {
+    width: calc(100% - 28px);
+    padding: 24px 0 60px;
+  }
+
+  .hero {
+    margin-bottom: 20px;
+  }
+
+  .eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 7.5vw, 36px);
+    letter-spacing: -1.2px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .hero-copy {
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .search-box {
+    padding: 8px;
+    border-radius: 16px;
+  }
+
+  .query-wrap {
+    min-height: 52px;
+    padding: 0 12px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+
+  .query-wrap input {
+    font-size: 16px; /* Prevents auto-zoom in mobile Safari */
+    height: 48px;
+  }
+
+  .search-bottom {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 4px 2px;
+  }
+
+  .filter-label {
+    display: none;
+  }
+
+  #domainSelect {
+    flex: 1 1 140px;
+    min-width: 130px;
+    max-width: 100%;
+    padding: 9px 30px 9px 10px;
+    font-size: 12.5px;
+  }
+
+  .search-hint {
+    display: none;
+  }
+
+  .search-button {
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+    border-radius: 10px;
+  }
+
+  .quick-searches {
+    margin-top: 12px;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .quick-searches > span {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .query-chip {
+    padding: 6px 12px;
+    font-size: 11.5px;
+  }
+
+  /* Results view responsiveness */
+  .results-top-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .results-title {
+    font-size: 22px;
+  }
+
+  .paper-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .card-top {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .card-title {
+    font-size: 17px;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .card-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .card-actions button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  /* Modals */
+  .modal-card {
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(100vh - 32px);
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .modal-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* Saved Drawer */
+  .saved-drawer {
+    width: 100vw;
+  }
+}
+
+/* Small Mobile Screens (<= 440px) */
+@media (max-width: 440px) {
+  .page-shell {
+    width: calc(100% - 20px);
+  }
+
+  .brand-name {
+    font-size: 17px;
+  }
+
+  .status-indicator {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  h1 {
+    font-size: clamp(26px, 7.8vw, 32px);
+    letter-spacing: -0.8px;
+  }
+
+  .search-box {
+    padding: 6px;
+  }
+
+  .card-abstract {
+    -webkit-line-clamp: 4;
+  }
 }
