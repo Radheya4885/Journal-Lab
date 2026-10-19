@@ -70,6 +70,13 @@ app.add_middleware(
 @app.api_route("/api/health", methods=["GET", "HEAD"], response_model=HealthResponse, tags=["System"])
 def health_check() -> HealthResponse:
     """Report readiness status of the server, dataset, and retrieval indices."""
+    if not retriever.is_ready:
+        try:
+            retriever.load_artifacts()
+            logger.info("Retriever artifacts successfully loaded on health probe.")
+        except Exception as exc:
+            logger.debug("Artifact reload attempt: %s", exc)
+
     is_ready = retriever.is_ready
     paper_count = len(retriever.papers) if retriever.papers is not None else 0
 
@@ -99,6 +106,12 @@ def recommend_papers(req: SearchRequest) -> RecommendationResponse:
     Search and recommend papers using hybrid TF-IDF + MiniLM retrieval and Reciprocal Rank Fusion.
     Accepts natural-language queries or arXiv IDs/URLs.
     """
+    if not retriever.is_ready:
+        try:
+            retriever.load_artifacts()
+        except Exception:
+            pass
+
     if not retriever.is_ready:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
