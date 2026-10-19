@@ -1,5 +1,7 @@
 # JournalLab — AI-Based Research Paper Recommendation Platform
 
+> 🌐 **Live Application**: [JournalLab — Research search & recommendations](https://journal-lab.onrender.com/)
+
 JournalLab is a scientific literature discovery and hypothesis exploration platform designed to recommend relevant academic papers and assist researchers with evidence-grounded AI analysis.
 
 ---

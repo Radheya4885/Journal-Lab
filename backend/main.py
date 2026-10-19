@@ -67,7 +67,7 @@ app.add_middleware(
 )
 
 
-@app.get("/api/health", response_model=HealthResponse, tags=["System"])
+@app.api_route("/api/health", methods=["GET", "HEAD"], response_model=HealthResponse, tags=["System"])
 def health_check() -> HealthResponse:
     """Report readiness status of the server, dataset, and retrieval indices."""
     is_ready = retriever.is_ready
@@ -275,7 +275,7 @@ def explain_paper_figure(arxiv_id: str, req: FigureExplainRequest) -> Dict[str, 
 
 
 # --- Frontend Direct Delivery Routes ---
-@app.get("/", response_class=FileResponse, include_in_schema=False)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=FileResponse, include_in_schema=False)
 def serve_index() -> FileResponse:
     """Serve the JournalLab frontend application directly from FastAPI."""
     return FileResponse(settings.BASE_DIR / "index.html")
