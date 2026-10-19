@@ -242,10 +242,22 @@
         <button type="button" class="modal-close" id="closeFigureModalBtn" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="figure-container">
+        <div class="figure-container" id="figureContainer">
+          <div class="figure-loader" id="figureLoader" hidden>
+            <div class="figure-spinner"></div>
+            <p class="figure-loading-text" id="figureLoadingText">Extracting architecture diagram from arXiv paper...</p>
+            <span class="figure-loading-subtext">Scraping LaTeX source packages, arXiv HTML5 &amp; high-res PDF figures</span>
+          </div>
           <img class="figure-img" id="figureImg" alt="Extracted architecture diagram from arXiv paper" />
         </div>
-        <p class="figure-caption" id="figureCaption"></p>
+        <div class="figure-meta-bar" id="figureMetaBar">
+          <p class="figure-caption" id="figureCaption"></p>
+          <div class="figure-actions">
+            <a class="secondary-btn btn-sm" id="figureArxivLink" href="#" target="_blank" rel="noopener">arXiv Source ↗</a>
+            <button type="button" class="secondary-btn btn-sm" id="figureDownloadBtn">Save Diagram ⤓</button>
+            <button type="button" class="secondary-btn btn-sm" id="figureRetryBtn" hidden>↻ Retry</button>
+          </div>
+        </div>
         <div class="figure-explain-section">
           <button type="button" class="secondary-btn" id="explainFigureBtn">
             <span>Explain Figure with Vision AI</span>

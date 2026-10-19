@@ -231,11 +231,16 @@ class JournalLabRetriever:
             for tag in tags:
                 self.domain_to_indices.setdefault(tag, []).append(idx)
 
-        logger.info("Initializing SentenceTransformer model: %s...", settings.EMBEDDING_MODEL_NAME)
-        self.encoder = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
-
         self.is_ready = True
         logger.info("JournalLab Retriever initialized successfully with %d papers.", n_papers)
+
+    def _get_encoder(self) -> SentenceTransformer:
+        """Lazy-load the SentenceTransformer encoder on first use to avoid slow DLL loading at startup."""
+        if self.encoder is None:
+            logger.info("Lazy-loading SentenceTransformer model: %s...", settings.EMBEDDING_MODEL_NAME)
+            self.encoder = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+            logger.info("SentenceTransformer model loaded successfully.")
+        return self.encoder
 
     def get_supported_domains(self) -> List[str]:
         """Return list of distinct supported domains."""
@@ -328,8 +333,8 @@ class JournalLabRetriever:
         q_tfidf = self.tfidf_vectorizer.transform([search_query])
         lexical_scores = (q_tfidf @ self.tfidf_matrix.T).toarray().ravel()
 
-        # 2. Semantic retrieval (SentenceTransformer dot product)
-        q_embedding = self.encoder.encode(
+        # 2. Semantic retrieval (SentenceTransformer dot product, encoder lazy-loaded on first search)
+        q_embedding = self._get_encoder().encode(
             [search_query],
             convert_to_numpy=True,
             normalize_embeddings=True,

@@ -1,8 +1,8 @@
 import logging
 from contextlib import asynccontextmanager
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel
@@ -248,9 +248,13 @@ def plan_experiment(req: ExperimentPlanRequest) -> ExperimentPlanResponse:
 
 
 @app.get("/api/papers/{arxiv_id}/figures", response_model=FigureResponse, tags=["Multimodal"])
-def get_paper_figure(arxiv_id: str) -> FigureResponse:
+def get_paper_figure(
+    arxiv_id: str,
+    title: Optional[str] = Query(default=None),
+    abstract: Optional[str] = Query(default=None),
+) -> FigureResponse:
     """Extract or retrieve the architecture/framework figure for an arXiv paper."""
-    fig = figure_service.get_paper_figure(arxiv_id)
+    fig = figure_service.get_paper_figure(arxiv_id, title=title or "", abstract=abstract or "")
     if fig is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -1,8 +1,9 @@
 // JournalLab - Production AI Research Paper Recommendation Engine Client
 
-const API_BASE = window.location.origin.includes(":8000")
-  ? window.location.origin
-  : "http://127.0.0.1:8000";
+const isDevFrontendOnly = window.location.port && window.location.port !== "8000" && !window.location.hostname.includes("railway") && !window.location.hostname.includes("render");
+const API_BASE = isDevFrontendOnly
+  ? "http://127.0.0.1:8000"
+  : (window.location.origin || "http://127.0.0.1:8000");
 
 const $ = (id) => document.getElementById(id);
 
@@ -760,36 +761,125 @@ async function handleGapAnalysis() {
 
 // Architecture Figure Modal
 let currentFigurePaper = null;
+let currentFigureDataUri = null;
+
+function downloadDataUri(filename, dataUri) {
+  const a = document.createElement("a");
+  a.href = dataUri;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 async function openFigureModal(paper) {
   currentFigurePaper = paper;
+  currentFigureDataUri = null;
   const modal = $("figureModal");
   const title = $("figureModalTitle");
   const img = $("figureImg");
+  const loader = $("figureLoader");
+  const loadingText = $("figureLoadingText");
   const caption = $("figureCaption");
+  const arxivLink = $("figureArxivLink");
+  const downloadBtn = $("figureDownloadBtn");
+  const retryBtn = $("figureRetryBtn");
   const explainBtn = $("explainFigureBtn");
   const explainBox = $("figureExplanation");
 
   title.textContent = `Framework: ${paper.title}`;
-  caption.textContent = "Fetching figure from arXiv...";
+  if (arxivLink) {
+    arxivLink.href = paper.url || `https://arxiv.org/abs/${paper.arxiv_id}`;
+  }
+  if (downloadBtn) {
+    downloadBtn.disabled = true;
+  }
+  if (retryBtn) {
+    retryBtn.hidden = true;
+  }
+
+  // Show active loader state
+  if (loader) loader.hidden = false;
+  img.hidden = true;
   img.src = "";
+  caption.innerHTML = "";
   explainBox.hidden = true;
   explainBox.textContent = "";
   explainBtn.disabled = true;
   modal.hidden = false;
 
+  const loadSteps = [
+    "Searching arXiv source packages for framework figures...",
+    "Scanning arXiv HTML5 & ar5iv diagrams...",
+    "Inspecting paper PDF embedded architecture models...",
+  ];
+  let stepIdx = 0;
+  const stepTimer = setInterval(() => {
+    stepIdx = (stepIdx + 1) % loadSteps.length;
+    if (loadingText && loader && !loader.hidden) {
+      loadingText.textContent = loadSteps[stepIdx];
+    }
+  }, 1200);
+
   try {
-    const res = await fetch(`${API_BASE}/api/papers/${paper.arxiv_id}/figures`);
+    const qParams = new URLSearchParams({
+      title: paper.title || "",
+      abstract: (paper.abstract || "").slice(0, 400),
+    });
+    const res = await fetch(`${API_BASE}/api/papers/${paper.arxiv_id}/figures?${qParams.toString()}`);
+    clearInterval(stepTimer);
+
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || "No figure available for this paper.");
+      throw new Error(err.detail || "No figure could be retrieved.");
     }
     const data = await res.json();
+    currentFigureDataUri = data.image_data_uri;
+
+    if (loader) loader.hidden = true;
+    img.hidden = false;
     img.src = data.image_data_uri;
-    caption.textContent = `[${data.fetch_mode}] ${data.caption}`;
-    explainBtn.disabled = false;
+
+    const isGeneratedSchematic = (data.fetch_mode || "").toLowerCase().includes("generated schematic");
+    const modeText = escapeHtml(data.fetch_mode || "Verified Figure");
+    const capText = escapeHtml(data.caption || "Paper Architecture & Framework Diagram");
+
+    if (isGeneratedSchematic) {
+      // No real figure found — show warning and keep retry button visible
+      caption.innerHTML = `
+        <div style="background:#78350f22;border:1px solid #d97706;border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">⚠️</span>
+          <span style="color:#fbbf24;font-weight:600;">No architecture diagram found in this paper.</span>
+        </div>
+        <span style="color:#94a3b8;font-size:13px;">The arXiv source, HTML5 version, Hugging Face, and PDF were all checked but no figure was extractable. The schematic below is auto-generated from the paper's abstract. Click <strong>Retry</strong> to try again.</span>`;
+      if (retryBtn) {
+        retryBtn.hidden = false;
+        retryBtn.onclick = () => openFigureModal(paper);
+      }
+      if (downloadBtn) downloadBtn.disabled = true;
+      explainBtn.disabled = true;
+    } else {
+      caption.innerHTML = `<span class="mode-tag">${modeText}</span> <span>${capText}</span>`;
+      if (downloadBtn) {
+        downloadBtn.disabled = false;
+        downloadBtn.onclick = () => {
+          const cleanId = String(paper.arxiv_id).replace(/[^a-zA-Z0-9]/g, "_");
+          downloadDataUri(`${cleanId}_framework.png`, currentFigureDataUri);
+          showToast("Architecture diagram downloaded!");
+        };
+      }
+      explainBtn.disabled = false;
+    }
   } catch (err) {
-    caption.textContent = `Diagram preview unavailable: ${err.message}`;
-    img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='12'>No Figure Found</text></svg>";
+    clearInterval(stepTimer);
+    if (loader) loader.hidden = true;
+    img.hidden = false;
+    caption.innerHTML = `<span style="color:#EF4444; font-weight:600;">Extraction Notice:</span> Diagram could not be scraped live (${escapeHtml(err.message)}).`;
+    img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='160' viewBox='0 0 400 160'><rect width='100%' height='100%' fill='%230F172A'/><text x='50%' y='45%' dominant-baseline='middle' text-anchor='middle' fill='%2394A3B8' font-size='14' font-family='sans-serif'>arXiv Architecture Diagram Unavailable</text><text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' fill='%2364748B' font-size='12' font-family='sans-serif'>Click Retry to re-attempt web scraping</text></svg>";
+    if (retryBtn) {
+      retryBtn.hidden = false;
+      retryBtn.onclick = () => openFigureModal(paper);
+    }
   }
 }
 

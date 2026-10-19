@@ -115,7 +115,7 @@ STRICT RULES:
             model=settings.GROQ_RAG_MODEL,
             messages=messages,
             temperature=0.2,
-            max_completion_tokens=2500,
+            max_completion_tokens=850,
         )
 
         report = response.choices[0].message.content or ""
@@ -230,7 +230,7 @@ RULES:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.1,
-            max_completion_tokens=2500,
+            max_completion_tokens=850,
         )
 
         report = response.choices[0].message.content or ""
@@ -312,7 +312,7 @@ SCIENTIFIC RULES:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.2,
-            max_completion_tokens=3500,
+            max_completion_tokens=850,
         )
 
         plan = response.choices[0].message.content or ""
@@ -367,7 +367,7 @@ Produce a rigorous research gap analysis with:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.2,
-            max_completion_tokens=2500,
+            max_completion_tokens=850,
             stream=True,
         )
         for chunk in stream:
@@ -418,7 +418,7 @@ Generate a complete, reproducible 10-section experimental research plan:
                 {"role": "user", "content": prompt},
             ],
             temperature=0.2,
-            max_completion_tokens=3500,
+            max_completion_tokens=850,
             stream=True,
         )
         for chunk in stream:
